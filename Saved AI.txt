@@ -1,0 +1,33 @@
+I believe inputs are ordered as so:
+[pipeX, pipeY1, pipeY2, birdHeight, birdVel]
+ node1   node2   node3    node4      node5
+
+7/17/22
+Simplest net that I found with 2 minutes of tests
+3 connections
+//
+'{"nodes":[{"n":1,"type":"inp","out":82},{"n":2,"type":"inp","out":553},{"n":3,"type":"inp","out":853},{"n":4,"type":"inp","out":779},{"n":5,"type":"inp","out":4},{"n":6,"type":"bias","out":1},{"n":7,"type":"out","out":-1}],"conn":[{"in":2,"out":7,"weight":0.4862199156936797,"enabled":true,"rec":false,"n":1},{"in":4,"out":7,"weight":-0.47138195081536516,"enabled":true,"rec":false,"n":3},{"in":5,"out":7,"weight":-0.6338008648419198,"enabled":true,"rec":false,"n":6}],"struct":[[{"n":1,"type":"inp","out":82},{"n":2,"type":"inp","out":553},{"n":3,"type":"inp","out":853},{"n":4,"type":"inp","out":779},{"n":5,"type":"inp","out":4},{"n":6,"type":"bias","out":1}],[],[{"n":7,"type":"out","out":-1}]],"numIn":5,"numOut":1}'
+//
+Analysis:
+conn from 2 to out, weight 0.4862199156936797
+conn from 4 to out, weight -0.47138195081536516
+conn from 5 to out, weight -0.6338008648419198
+Positive connection with the top of the current pipe,
+Negative connection with the bird's height,
+Slightly stronger negative connection with the bird's velocity.
+
+Connection 2 is a positive connection that basically adds half
+of the height of the top pipe. About 200 - 400.
+Connection 4 is a negative connection with about the same magnitude
+as connection 2. This basically cancels out connection 2 when the bird is
+too high, stopping it from jumping unless it is sufficiently lower than the
+top pipe.
+Connection 5 is a strong negative weight to the bird's Velocity. This contriols
+its jump to happen when it is falling. As it is a negative connection,
+when it goes up (positive velocity), the output is
+decreased. But, when the input is negative, it adds to the output, making it
+much more likely to jump.
+
+In total, this makes the bird jump by comparing the bird's height to the
+height of the top pipe, and jumping only when it is sufficiently lower than
+it, and also only jumping when its velocity is a strong negative, aka falling.
